@@ -32,6 +32,11 @@ class FileWatcherHandler(FileSystemEventHandler):
         
         if os.path.exists(tmpfile):
           move(tmpfile, outfile)
+          try:
+            os.remove(src_path)
+          except OSError:
+            print("Can't delete input file %s" % src_path)
+
           print("Processing of %s completed, output file available at: %s" % (filename, outfile))
 
     def process_existing_files(self):
