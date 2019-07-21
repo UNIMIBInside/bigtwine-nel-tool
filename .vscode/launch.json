@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - NEEL_Linking",
+      "request": "launch",
+      "mainClass": "NEEL_Linking"
+    }
+  ]
+}
