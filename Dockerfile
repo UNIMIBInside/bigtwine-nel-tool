@@ -18,4 +18,4 @@ RUN pip install watchdog
 
 COPY tool/ /tool
 
-CMD [ "python2", "/tool/main.py", "/data", "/kb" ]
+CMD [ "python2", "-u", "/tool/main.py", "/data", "/kb" ]
