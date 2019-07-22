@@ -41,17 +41,17 @@ class FileWatcherHandler(PatternMatchingEventHandler):
 
       logging.info("Processing of %s completed, output file available at: %s" % (filename, outfile))
 
-    def process_existing_files(self):
-      for src_path in os.listdir(self.inpath):
-        path = os.path.join(self.inpath, src_path)
-        if not os.path.isdir(path):
-          self.process(path)
+  def process_existing_files(self):
+    for src_path in os.listdir(self.inpath):
+      path = os.path.join(self.inpath, src_path)
+      if not os.path.isdir(path):
+        self.process(path)
 
-    def on_created(self, event):
-      self.process(event.src_path)
-    
-    def on_moved(self, event):
-      self.process(event.dest_path)
+  def on_created(self, event):
+    self.process(event.src_path)
+  
+  def on_moved(self, event):
+    self.process(event.dest_path)
 
 def make_directories():
   for folder in [INPUT_PATH, PROCESSING_PATH, OUTPUT_PATH]:
