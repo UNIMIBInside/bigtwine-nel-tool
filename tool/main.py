@@ -9,6 +9,9 @@ from shutil import copyfile, move
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
+log = logging.getLogger()
+log.setLevel(logging.DEBUG)
+
 INPUT_PATH = '/data/input'
 PROCESSING_PATH = '/data/processing'
 OUTPUT_PATH = '/data/output'
@@ -29,7 +32,7 @@ class FileWatcherHandler(PatternMatchingEventHandler):
     tmpfile = os.path.join(self.procpath, filename)
     outfile = os.path.join(self.outpath, filename)
     
-    logging.info("Processing: {0}".format(src_path))
+    log.info("Processing: {0}".format(src_path))
     subprocess.call(['java', '-jar', self.toolpath, src_path, self.kbpath, tmpfile])
     
     if os.path.exists(tmpfile):
@@ -37,9 +40,9 @@ class FileWatcherHandler(PatternMatchingEventHandler):
       try:
         os.remove(src_path)
       except OSError:
-        logging.error("Can't delete input file %s" % src_path)
+        log.error("Can't delete input file %s" % src_path)
 
-      logging.info("Processing of %s completed, output file available at: %s" % (filename, outfile))
+      log.info("Processing of %s completed, output file available at: %s" % (filename, outfile))
 
   def process_existing_files(self):
     for src_path in os.listdir(self.inpath):
@@ -58,14 +61,22 @@ def make_directories():
     if not os.path.exists(folder):
       os.mkdir(folder)
 
+def setup_logger():
+  handler = logging.StreamHandler(sys.stdout)
+  handler.setLevel(logging.INFO)
+  formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+  handler.setFormatter(formatter)
+  log.addHandler(handler)
+
 if __name__ == "__main__":
-  logging.info("NEL tool started")
+  setup_logger()
   make_directories()
+  log.info("NEL tool started")
   
   event_handler = FileWatcherHandler(INPUT_PATH, PROCESSING_PATH, OUTPUT_PATH, TOOL_PATH, KB_PATH)
   event_handler.process_existing_files()
 
-  logging.info("Waiting for input files into: %s" % INPUT_PATH)
+  log.info("Waiting for input files into: %s" % INPUT_PATH)
   
   observer = Observer()
   observer.schedule(event_handler, INPUT_PATH, recursive=False)
