@@ -20,7 +20,7 @@ KB_PATH = '/kb'
 
 class FileWatcherHandler(PatternMatchingEventHandler):
   def __init__(self, inpath, procpath, outpath, toolpath, kbpath):
-    super(FileWatcherHandler, self).__init__(ignore_directories=True, patterns=['*'] ignore_patterns=['*.tmp'])
+    super(FileWatcherHandler, self).__init__(ignore_directories=True, patterns=['*'], ignore_patterns=['*.tmp'])
     self.inpath = inpath
     self.procpath = procpath
     self.outpath = outpath
