@@ -54,7 +54,7 @@ class FileWatcherHandler(PatternMatchingEventHandler):
         break
 
       next_file = max(files, key=lambda x: os.path.getmtime(x))
-      self.process(src_path)
+      self.process(next_file)
 
   def on_created(self, event):
     self.process_input_files()
