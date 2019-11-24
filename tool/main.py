@@ -45,12 +45,15 @@ class FileWatcherHandler(PatternMatchingEventHandler):
       log.info("Processing of %s completed, output file available at: %s" % (filename, outfile))
 
   def process_input_files(self):
-    files = [os.path.join(self.inpath, f) for f in os.listdir(self.inpath)]
-    files = filter(os.path.isfile, files)
-    files = filter(lambda f: not f.endswith('.tmp'), files)
-    files = sorted(files, key=lambda x: os.path.getmtime(x), reverse=True)
+    while True:
+      files = [os.path.join(self.inpath, f) for f in os.listdir(self.inpath)]
+      files = filter(os.path.isfile, files)
+      files = filter(lambda f: not f.endswith('.tmp'), files)
 
-    for src_path in files:
+      if len(files) == 0:
+        break
+
+      next_file = max(files, key=lambda x: os.path.getmtime(x))
       self.process(src_path)
 
   def on_created(self, event):
