@@ -44,17 +44,19 @@ class FileWatcherHandler(PatternMatchingEventHandler):
 
       log.info("Processing of %s completed, output file available at: %s" % (filename, outfile))
 
-  def process_existing_files(self):
-    for src_path in os.listdir(self.inpath):
-      path = os.path.join(self.inpath, src_path)
-      if not os.path.isdir(path):
-        self.process(path)
+  def process_input_files(self):
+    files = filter(os.path.isfile, os.listdir(self.inpath))
+    files = [os.path.join(self.inpath, f) for f in files]
+    files.sort(key=lambda x: os.path.getmtime(x))
+
+    for src_path in files:
+      self.process(src_path)
 
   def on_created(self, event):
-    self.process(event.src_path)
+    self.process_input_files()
   
   def on_moved(self, event):
-    self.process(event.dest_path)
+    self.process_input_files()
 
 def make_directories():
   for folder in [INPUT_PATH, PROCESSING_PATH, OUTPUT_PATH]:
@@ -74,7 +76,7 @@ if __name__ == "__main__":
   log.info("NEL tool started")
   
   event_handler = FileWatcherHandler(INPUT_PATH, PROCESSING_PATH, OUTPUT_PATH, TOOL_PATH, KB_PATH)
-  event_handler.process_existing_files()
+  event_handler.process_input_files()
 
   log.info("Waiting for input files into: %s" % INPUT_PATH)
   
