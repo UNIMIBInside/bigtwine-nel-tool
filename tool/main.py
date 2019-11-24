@@ -45,9 +45,10 @@ class FileWatcherHandler(PatternMatchingEventHandler):
       log.info("Processing of %s completed, output file available at: %s" % (filename, outfile))
 
   def process_input_files(self):
-    files = filter(os.path.isfile, os.listdir(self.inpath))
-    files = [os.path.join(self.inpath, f) for f in files]
-    files.sort(key=lambda x: os.path.getmtime(x))
+    files = [os.path.join(self.inpath, f) for f in os.listdir(self.inpath)]
+    files = filter(os.path.isfile, files)
+    files = filter(lambda f: not f.endswith('.tmp'), files)
+    files = sorted(files, key=lambda x: os.path.getmtime(x))
 
     for src_path in files:
       self.process(src_path)
